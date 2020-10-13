@@ -10,10 +10,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(express.static('public'))
 
-// let writeNote = require(''./db/db.json'')
 
-// // path to notes database
-// const noteDB = './db/db.json'
 
 // variable to parse data
 const readDB = JSON.parse(fs.readFileSync(path.join(__dirname, './db/db.json'), (err, data) => {
