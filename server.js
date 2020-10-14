@@ -33,17 +33,18 @@ app.get('/api/notes', function (req, res) {
 // POST note
 app.post('/api/notes', function (req, res) {
     let newPost = req.body
-    // assigning an id so we can delete by id later
-    // +1 to make it simple so first post starts at 1 instead of 0
-    newPost.id = notesDB.length + 1
+
     // read data from db
     fs.readFile('./db/db.json', "utf8", (err, data) =>{
         if (err) console.log(err)
         console.log(data)
         // parse into object
         let note = JSON.parse(data)
-        console.log('parsed', note)
-        console.log('stringify', note)
+        // assigning an id so we can delete by id later
+        // +1 to make it simple so first post starts at 1 instead of 0
+        newPost.id = note.length + 1
+        // console.log('parsed', note)
+        // console.log('stringify', note)
         note.push(newPost)
         // stringify then write to db
         note = JSON.stringify(note)
@@ -56,14 +57,20 @@ app.post('/api/notes', function (req, res) {
 })
 
 // DELETE note
-// app.delete('/api/notes/:id', function(req, res) {
-//     let deleteID = req.params.id
-//     readDB = readDB.filter((note) => {
-//         return note.id != deleteID
-//     })
-//     writeNotes(readNotes)
-//     return res.json(readNotes)
-// })
+app.delete('/api/notes/:id', function(req, res) {
+    let deleteID = req.params.id
+    // creating a temp object that will return every note that DOES NOT match the deleteID
+    tempDB = notesDB.filter((tempDB) => {
+        return tempDB.id != deleteID
+    })
+    console.log('temp', tempDB)
+    // stringify and write to db
+    tempDB = JSON.stringify(tempDB)
+    fs.writeFileSync('./db/db.json', tempDB, function(err) {
+        if (err) console.log(err)
+        res.json(tempDB)
+    })
+})
 
 // start server, begins listening..
 app.listen(PORT, () => {
